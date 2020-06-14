@@ -10,21 +10,61 @@ class SearchPage extends React.Component {
       bookList: []
     }
 
-    handleChange = async (query) => {
-      const books = await search(query)
+
+    search = async (query) => {
+      let books = await search(query)
+      let { bookLists } = this.props;
+      books && !books.error && books.forEach((book) =>{
+        if(bookLists.currentlyReading.find(currentlyReadingBook => currentlyReadingBook.id === book.id)){
+          book.shelf='currentlyReading';
+        }
+        if(bookLists.wantToRead.find(wantToReadBook => wantToReadBook.id === book.id)){
+          book.shelf="wantToRead";
+        }
+        if(bookLists.read.find(readBook => readBook.id === book.id)){
+          book.shelf="read"
+        }
+      })
       this.setState({
-        searchTerm: query.trim(),
         bookList: (books && !books.error) ? books : []})
     }
 
-    onBookShelfAddHandler(targetShelf, book){
+    handleChange = (query) => {
+      this.search(query);
+      this.setState({
+        searchTerm: query.trim(),
+      })
+    }
+
+    onBookShelfChangeHandler = (previousShelf, targetShelf, index) =>{
+      let { bookLists, onBookShelfChangeHandler } = this.props;
+      const bookToChange = this.state.bookList[index];
+      const bookToSearchFor = bookLists[previousShelf].find(book => book.id === bookToChange.id)
+      const bookIndex = bookLists[previousShelf].indexOf(bookToSearchFor)
+
+      let currentState = this.state.bookList;
+      currentState[index].shelf = targetShelf;
+      this.setState({
+        bookList: currentState
+      })
+
+      return onBookShelfChangeHandler(previousShelf, targetShelf, bookIndex);
+    }
+
+    onBookShelfAddHandler = (targetShelf, book, index) => {
 
       const bookToAdd = {
         id: book.id,
         title: book.title,
-        author: book.authors.join(', '),
-        imageSrc: book.imageLinks.thumbnail
+        author: book.authors && book.authors.join(', '),
+        imageSrc: book && book.imageLinks && book.imageLinks.thumbnail
       }
+
+      let currentState = this.state.bookList;
+      currentState[index].shelf = targetShelf;
+      this.setState({
+        bookList: currentState
+      })
 
       return this.props.onBookShelfAddHandler(bookToAdd, targetShelf);
     }
@@ -37,20 +77,21 @@ class SearchPage extends React.Component {
               <Link to="/"><button className="close-search" >Close</button></Link>
               <div className="search-books-input-wrapper">
                 <form>
-                  <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleChange(event.target.value)}/>
+                  <input type="text" placeholder="Search by title or author" value={this.state.searchTerm} onChange={(event) => this.handleChange(event.target.value)}/>
                 </form>
               </div>
             </div>
             <div className="search-books-results">
               <ol className="books-grid">
                 {this.state.bookList.map((book,index) =>{
-                  return <Book  shelf='none' 
-                  listIndex={index} 
-                  key={"read-" + index} 
-                  title={book.title} 
-                  author={book.author} 
-                  onBookShelfChange={(shelf, targetShelf, index) => {this.onBookShelfAddHandler(targetShelf, book) }} 
-                  imageSrc={book && book.imageLinks && book.imageLinks.thumbnail}/>
+                  return <Book  shelf={book.shelf || 'none'}
+                                listIndex={index} 
+                                key={"read-" + index} 
+                                title={book.title} 
+                                author={book.author} 
+                                onBookShelfChange={(shelf, targetShelf, index) => {book.shelf ? this.onBookShelfChangeHandler(shelf, targetShelf, index) 
+                                                                                              : this.onBookShelfAddHandler(targetShelf, book, index) }} 
+                                imageSrc={book && book.imageLinks && book.imageLinks.thumbnail}/>
                   })
                 }
               </ol>

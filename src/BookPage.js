@@ -6,17 +6,15 @@ import { Link } from 'react-router-dom';
 class BookPage extends React.Component {
 
     constructor(props){
-        console.log(props.books);
         super(props);
         this.bookLists = props.books;
     }
 
-    onBookShelfChangeHandler(shelf, targetShelf, index){
+    onBookShelfChangeHandler = (shelf, targetShelf, index) =>{
         return this.props.onBookShelfChangeHandler(shelf, targetShelf, index);
     }
 
     render() {
-        console.log(this.props);
         return (
                 <div className="list-books">
                   <div className="list-books-title">

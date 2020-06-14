@@ -29,8 +29,8 @@ class BooksApp extends React.Component {
           newBookLists[book.shelf].push({
             id: book.id,
             title: book.title,
-            author: book.authors.join(', '),
-            imageSrc: book && book.imageLinks && book.imageLinks.thumbnail
+            author: book.authors && book.authors.join(', '),
+            imageSrc: book.imageLinks && book.imageLinks.thumbnail
           })
         })
 
@@ -73,10 +73,13 @@ class BooksApp extends React.Component {
         <Route exact path="/" render={() =>(
           <BookPage 
           bookLists={this.state.bookLists} 
-          onBookShelfChangeHanlder={this.onBookShelfChangeHanlder.bind(this)}/>
+          onBookShelfChangeHandler={this.onBookShelfChangeHanlder.bind(this)}/>
         )}/>
         <Route exact path="/search" render={() => (
-          <SearchPage onBookShelfAddHandler={this.onBookShelfAddHandler.bind(this)} />
+          <SearchPage 
+          bookLists={this.state.bookLists} 
+          onBookShelfAddHandler={this.onBookShelfAddHandler.bind(this)}
+          onBookShelfChangeHandler = {this.onBookShelfChangeHanlder.bind(this)} />
         )} />
       </div>
     )
