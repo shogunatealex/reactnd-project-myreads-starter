@@ -30,7 +30,7 @@ class BooksApp extends React.Component {
             id: book.id,
             title: book.title,
             author: book.authors.join(', '),
-            imageSrc: book.imageLinks.thumbnail
+            imageSrc: book && book.imageLinks && book.imageLinks.thumbnail
           })
         })
 

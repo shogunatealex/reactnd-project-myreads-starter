@@ -50,7 +50,7 @@ class SearchPage extends React.Component {
                   title={book.title} 
                   author={book.author} 
                   onBookShelfChange={(shelf, targetShelf, index) => {this.onBookShelfAddHandler(targetShelf, book) }} 
-                  imageSrc={book.imageLinks.thumbnail}/>
+                  imageSrc={book && book.imageLinks && book.imageLinks.thumbnail}/>
                   })
                 }
               </ol>
