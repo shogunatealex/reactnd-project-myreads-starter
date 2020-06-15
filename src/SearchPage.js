@@ -32,7 +32,7 @@ class SearchPage extends React.Component {
     handleChange = (query) => {
       this.search(query);
       this.setState({
-        searchTerm: query.trim(),
+        searchTerm: query,
       })
     }
 

@@ -8,6 +8,11 @@ class BookPage extends React.Component {
     constructor(props){
         super(props);
         this.bookLists = props.books;
+        this.shelves = [
+          ['Currently Reading', 'currentlyReading'],
+          ['Want to Read', 'wantToRead'],
+          ['Read', 'read'],
+        ]
     }
 
     onBookShelfChangeHandler = (shelf, targetShelf, index) =>{
@@ -22,39 +27,19 @@ class BookPage extends React.Component {
                   </div>
                   <div className="list-books-content">
                     <div>
-                      <BookList title="Currently Reading">
-                        {this.props.bookLists.currentlyReading.map( (book,index) => {
-                          return <Book  shelf='currentlyReading' 
-                                        listIndex={index} 
-                                        key={"currently-reading-" + index} 
-                                        onBookShelfChange={this.onBookShelfChangeHandler.bind(this)} 
-                                        title={book.title} 
-                                        author={book.author} 
-                                        imageSrc={book.imageSrc}/>
-                        })}
-                      </BookList>
-                      <BookList title="Want to Read">
-                      {this.props.bookLists.wantToRead.map( (book, index) => {
-                          return <Book  shelf='wantToRead' 
-                                        listIndex={index} 
-                                        key={"want-to-read-" + index} 
-                                        onBookShelfChange={this.onBookShelfChangeHandler.bind(this)} 
-                                        title={book.title} 
-                                        author={book.author} 
-                                        imageSrc={book.imageSrc}/>
-                        })}
-                      </BookList>
-                      <BookList title="Read">
-                        {this.props.bookLists.read.map((book, index) => {
-                            return <Book  shelf='read' 
+                      {this.shelves.map((shelf) => (
+                        <BookList title={shelf[0]}>
+                          {this.props.bookLists[shelf[1]].map( (book,index) => {
+                            return <Book  shelf={shelf[1]} 
                                           listIndex={index} 
-                                          key={"read-" + index} 
+                                          key={"currently-reading-" + index} 
                                           onBookShelfChange={this.onBookShelfChangeHandler.bind(this)} 
                                           title={book.title} 
                                           author={book.author} 
                                           imageSrc={book.imageSrc}/>
                           })}
-                      </BookList>
+                        </BookList>
+                      ))}
                     </div>
                   </div>
                   <div className="open-search">
